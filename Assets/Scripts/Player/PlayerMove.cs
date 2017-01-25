@@ -54,8 +54,7 @@ public class PlayerMove : MonoBehaviour
 		float angle = Mathf.Atan2(inputVector.y, inputVector.x) * Mathf.Rad2Deg;
 
 		Quaternion newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
-		transform.rotation = 
-			Quaternion.RotateTowards(transform.rotation, newRotation, rotateSpeed);
+		transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, rotateSpeed);
 	}
 
 	private void Move() {
@@ -64,8 +63,7 @@ public class PlayerMove : MonoBehaviour
 			movePos = Vector3.zero;
 		}
 		else { 
-		  	movePos = 
-			transform.right * inputVector.magnitude * moveSpeed * Time.fixedDeltaTime;
+		  	movePos = transform.right * inputVector.magnitude * moveSpeed * Time.fixedDeltaTime;
 		}
 		rigidbody.position = limitArea.Clamp(transform.position + movePos);
 	}
@@ -80,7 +78,7 @@ public class PlayerMove : MonoBehaviour
 		Vector3 direction = transform.position - other.transform.position;
 		direction.Normalize();
 
-		rigidbody.velocity = direction * 2f;
+		rigidbody.velocity = direction * 4f;
 
 		StartCoroutine(DamageAnimation());
 
