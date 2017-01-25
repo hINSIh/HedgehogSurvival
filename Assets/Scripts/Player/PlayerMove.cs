@@ -5,13 +5,14 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class PlayerMove : MonoBehaviour
 {
-
 	public Joystick joystick;
 	[Header("Speed")]
 	public float moveSpeed;
 	public float rotateSpeed;
 	[Header("Move limit option")]
 	public float limitPadding;
+	[Header("Health")]
+	public PlayerHealth playerHealth;
 
 	new private Rigidbody2D rigidbody;
 	private Animator animator;
@@ -36,7 +37,7 @@ public class PlayerMove : MonoBehaviour
 
 		Move();
 
-		if (!isMove) {
+		if (!isMove || animator.GetBool("Damage")) {
 			return;
 		}
 
@@ -50,12 +51,11 @@ public class PlayerMove : MonoBehaviour
 
 	private void Rotate()
 	{
-		float currentAngle = transform.eulerAngles.z;
-
 		float angle = Mathf.Atan2(inputVector.y, inputVector.x) * Mathf.Rad2Deg;
+
 		Quaternion newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
 		transform.rotation = 
-			Quaternion.Slerp(transform.rotation, newRotation, rotateSpeed * Time.fixedDeltaTime);
+			Quaternion.RotateTowards(transform.rotation, newRotation, rotateSpeed);
 	}
 
 	private void Move() {
@@ -72,7 +72,7 @@ public class PlayerMove : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.gameObject.tag != "Enemy")
+		if (animator.GetBool("Damage") || other.gameObject.tag != "Enemy")
 		{
 			return;
 		}
@@ -83,11 +83,13 @@ public class PlayerMove : MonoBehaviour
 		rigidbody.velocity = direction * 2f;
 
 		StartCoroutine(DamageAnimation());
+
+		playerHealth.Damage(1);
 	}
 
 	IEnumerator DamageAnimation() {
 		animator.SetBool("Damage", true);
-		yield return new WaitForSeconds(0.8f);
+		yield return new WaitForSeconds(0.5f);
 		animator.SetBool("Damage", false);
 	}
 }

@@ -23,7 +23,7 @@ public class PlayerHealth : MonoBehaviour {
 
 	public void Damage(int damage) {
 		currentHealth -= damage;
-		if (currentHealth < 0) {
+		if (currentHealth <= 0) {
 			GameOver();
 			currentHealth = 0;
 		}
@@ -33,6 +33,7 @@ public class PlayerHealth : MonoBehaviour {
 
 	private void GameOver() {
 		Debug.Log("GameOver!");
+		gameObject.SetActive(false);
 		// TODO gameover
 	}
 }
