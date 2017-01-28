@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
 public class CameraFollow : MonoBehaviour {
@@ -34,4 +36,6 @@ public class CameraFollow : MonoBehaviour {
 
 		limitArea = MapManager.LimitArea.AddMargin(cameraHeight, cameraWidth);
 	}
+
 }
+

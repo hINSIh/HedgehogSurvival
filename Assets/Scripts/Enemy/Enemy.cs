@@ -74,4 +74,24 @@ public class Enemy : MonoBehaviour
             _speed = tempSpeed;
         }
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag != "Player")
+        {
+            return;
+        }
+
+        Vector3 direction = transform.position - other.transform.position;
+        direction.Normalize();
+
+        rigidbody.velocity = direction * 5f;
+
+        StartCoroutine(HitDelay());
+    }
+
+    IEnumerator HitDelay()
+    {
+        yield return new WaitForSeconds(5f);
+    }
 }

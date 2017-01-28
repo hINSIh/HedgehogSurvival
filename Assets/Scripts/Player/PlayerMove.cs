@@ -87,7 +87,7 @@ public class PlayerMove : MonoBehaviour
 
 	IEnumerator DamageAnimation() {
 		animator.SetBool("Damage", true);
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.2f);
 		animator.SetBool("Damage", false);
 	}
 }
