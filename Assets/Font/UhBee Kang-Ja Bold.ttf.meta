@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 0543d754b947949eca60f25fac0e019c
+timeCreated: 1486103971
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: UhBee Kang-Ja
+  fontNames:
+  - UhBee Kang-Ja
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

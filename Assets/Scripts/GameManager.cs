@@ -4,13 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-	private bool isPlaying;
-
-	public enum PlayType {
-		Survival, Stage
-	}
-
-	public PlayType playType;
+	private bool isPause = true;
 
 	// Use this for initialization
 	void Start () {
@@ -22,12 +16,11 @@ public class GameManager : MonoBehaviour {
 		
 	}
 
-	public bool IsPlaying { 
-		get { return isPlaying; }
-		set { isPlaying = value; }
-	}
-
-	private void HideGame() { 
-		
+	public bool Pause { 
+		get { return isPause; }
+		set {
+			isPause = value;
+			Time.timeScale = isPause ? 0 : 1;
+		}
 	}
 }

@@ -58,13 +58,7 @@ public class PlayerMove : MonoBehaviour
 	}
 
 	private void Move() {
-		Vector3 movePos;
-		if (rigidbody.velocity.sqrMagnitude > 1) {
-			movePos = Vector3.zero;
-		}
-		else { 
-		  	movePos = transform.right * inputVector.magnitude * moveSpeed * Time.fixedDeltaTime;
-		}
+		Vector3 movePos = transform.right * inputVector.magnitude * moveSpeed * Time.fixedDeltaTime;
 		rigidbody.position = limitArea.Clamp(transform.position + movePos);
 	}
 
@@ -78,7 +72,7 @@ public class PlayerMove : MonoBehaviour
 		Vector3 direction = transform.position - other.transform.position;
 		direction.Normalize();
 
-		rigidbody.velocity = direction * 4f;
+		rigidbody.velocity = direction * 2f;
 
 		StartCoroutine(DamageAnimation());
 
