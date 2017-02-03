@@ -82,7 +82,7 @@ public class PlayerMove : MonoBehaviour
 
 		StartCoroutine(DamageAnimation());
 
-		playerHealth.Damage(1);
+		//playerHealth.Damage(1);
 	}
 
 	IEnumerator DamageAnimation() {

@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-
+    public int damage;
     public int health;
     public float _speed;
     public float rotateSpeed;
 
+    public PlayerHealth playerHealth;
     public Transform playerTransform;
     public Transform rayTransform;
 
@@ -82,16 +83,6 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        Vector3 direction = transform.position - other.transform.position;
-        direction.Normalize();
-
-        rigidbody.velocity = direction * 5f;
-
-        StartCoroutine(HitDelay());
-    }
-
-    IEnumerator HitDelay()
-    {
-        yield return new WaitForSeconds(5f);
+        playerHealth.Damage(damage);
     }
 }
