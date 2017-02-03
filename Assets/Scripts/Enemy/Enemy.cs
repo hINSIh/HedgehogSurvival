@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-
+    public int damage;
     public int health;
     public float _speed;
     public float rotateSpeed;
 
+    private bool damageDelayCheak = true;
+
+    public PlayerHealth playerHealth;
     public Transform playerTransform;
     public Transform rayTransform;
 
@@ -77,21 +80,19 @@ public class Enemy : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag != "Player")
+        if (damageDelayCheak == false || other.gameObject.tag != "Player")
         {
             return;
         }
 
-        Vector3 direction = transform.position - other.transform.position;
-        direction.Normalize();
-
-        rigidbody.velocity = direction * 5f;
-
-        StartCoroutine(HitDelay());
+        playerHealth.Damage(damage);
+        StartCoroutine(DamageDelay());
     }
 
-    IEnumerator HitDelay()
+    private IEnumerator DamageDelay()
     {
-        yield return new WaitForSeconds(5f);
+        damageDelayCheak = false;
+        yield return new WaitForSeconds(1f);
+        damageDelayCheak = true;
     }
 }
