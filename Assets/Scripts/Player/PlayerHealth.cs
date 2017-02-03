@@ -18,8 +18,8 @@ public class PlayerHealth : MonoBehaviour {
 	}
 	
 	void Update () {
-		
-	}
+        healthSlider.value = currentHealth;
+    }
 
 	public void Damage(int damage) {
 		currentHealth -= damage;
@@ -28,8 +28,13 @@ public class PlayerHealth : MonoBehaviour {
 			currentHealth = 0;
 		}
 
-		healthSlider.value = currentHealth;
+		//healthSlider.value = currentHealth;
 	}
+
+    public void Healing()
+    {
+        currentHealth = maxHealth;
+    }
 
 	private void GameOver() {
 		Debug.Log("GameOver!");

@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class PlayerMove : MonoBehaviour
 {
+    public Enemy enemy;
 	public Joystick joystick;
 	[Header("Speed")]
 	public float moveSpeed;
@@ -78,11 +79,9 @@ public class PlayerMove : MonoBehaviour
 		Vector3 direction = transform.position - other.transform.position;
 		direction.Normalize();
 
-		rigidbody.velocity = direction * 4f;
+		rigidbody.velocity = direction * 3f;
 
 		StartCoroutine(DamageAnimation());
-
-		//playerHealth.Damage(1);
 	}
 
 	IEnumerator DamageAnimation() {

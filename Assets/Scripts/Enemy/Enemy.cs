@@ -9,6 +9,8 @@ public class Enemy : MonoBehaviour
     public float _speed;
     public float rotateSpeed;
 
+    private bool damageDelayCheak = true;
+
     public PlayerHealth playerHealth;
     public Transform playerTransform;
     public Transform rayTransform;
@@ -78,11 +80,19 @@ public class Enemy : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag != "Player")
+        if (damageDelayCheak == false || other.gameObject.tag != "Player")
         {
             return;
         }
 
         playerHealth.Damage(damage);
+        StartCoroutine(DamageDelay());
+    }
+
+    private IEnumerator DamageDelay()
+    {
+        damageDelayCheak = false;
+        yield return new WaitForSeconds(1f);
+        damageDelayCheak = true;
     }
 }

@@ -12,8 +12,8 @@ public class Round
 
 public class EnemySpawn : MonoBehaviour
 {
-
     public Transform player;
+    public PlayerHealth playerhealth;
 
     public Round[] rounds;
     public Transform[] spawnPoints;
@@ -43,6 +43,7 @@ public class EnemySpawn : MonoBehaviour
                 enemyObject.transform.position = spawnPoint.position;
 
                 enemyObject.GetComponent<Enemy>().playerTransform = player;
+                enemyObject.GetComponent<Enemy>().playerHealth = playerhealth;
 
                 enemyObject.name = "Enemy_" + (round + 1) + "R";
                 yield return spawnDelay;
