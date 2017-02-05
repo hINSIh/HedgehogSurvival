@@ -5,20 +5,26 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class PlayerMove : MonoBehaviour
 {
-    public Enemy enemy;
 	public Joystick joystick;
+
 	[Header("Speed")]
 	public float moveSpeed;
+	public float transformMoveSpeed;
 	public float rotateSpeed;
+
 	[Header("Move limit option")]
 	public float limitPadding;
-	[Header("Health")]
+
+	[Header("Script")]
 	public PlayerHealth playerHealth;
+	public PlayerEnergy playerEnergy;
 
 	new private Rigidbody2D rigidbody;
 	private Animator animator;
 	private LimitArea limitArea;
 	private Vector3 inputVector;
+
+	private bool isTransform;
 
 	// Use this for initialization
 	void Start()
@@ -31,18 +37,35 @@ public class PlayerMove : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate()
 	{
+		if (playerEnergy.IsChargeToggle()) {
+			return;
+		}
+
 		inputVector = joystick.GetInputVector();
 
 		bool isMove = inputVector.sqrMagnitude > 0;
 		animator.SetBool("Move", isMove);
 
-		Move();
-
-		if (!isMove || animator.GetBool("Damage")) {
+		if (!isMove) {
 			return;
 		}
 
+		Move();
 		Rotate();
+	}
+
+	public bool IsTransform() {
+		return isTransform;
+	}
+
+	public void SetTransform(bool value)
+	{
+		isTransform = value;
+		animator.SetBool("Transform", value);
+		if (value)
+		{
+			animator.SetBool("Damage", false);
+		}
 	}
 
 	private void SetupLimitArea()
@@ -58,29 +81,27 @@ public class PlayerMove : MonoBehaviour
 		transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, rotateSpeed);
 	}
 
-	private void Move() {
-		Vector3 movePos = transform.right * inputVector.magnitude * moveSpeed * Time.fixedDeltaTime;
+	private void Move()
+	{
+		float speed = isTransform ? transformMoveSpeed : moveSpeed;
+		Vector3 movePos = transform.right * inputVector.magnitude * speed * Time.fixedDeltaTime;
 		rigidbody.position = limitArea.Clamp(transform.position + movePos);
 	}
 
-	void OnTriggerEnter2D(Collider2D other)
+	void OnTriggerStay2D(Collider2D other)
 	{
-		if (animator.GetBool("Damage") || other.gameObject.tag != "Enemy")
+		Debug.Log(Time.time);
+		if (animator.GetBool("Damage") || animator.GetBool("Transform") || other.gameObject.tag != "Enemy")
 		{
 			return;
 		}
-
-		Vector3 direction = transform.position - other.transform.position;
-		direction.Normalize();
-
-		rigidbody.velocity = direction * 2f;
 
 		StartCoroutine(DamageAnimation());
 	}
 
 	IEnumerator DamageAnimation() {
 		animator.SetBool("Damage", true);
-		yield return new WaitForSeconds(0.2f);
+		yield return new WaitForSeconds(0.5f);
 		animator.SetBool("Damage", false);
 	}
 }

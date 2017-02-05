@@ -63,6 +63,12 @@ public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointer
 	private void MoveJoystick(Vector2 vector) {
 		vector.x *= backgroundSize.x / 3f;
 		vector.y *= backgroundSize.y / 3f;
+		float angle = Mathf.Atan2(vector.y, vector.x) * Mathf.Rad2Deg - 90;
+		if (vector.magnitude <= 0) {
+			angle = 0;
+		}
+
+		joystickImage.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 		joystickImage.rectTransform.anchoredPosition = vector;
 	}
 

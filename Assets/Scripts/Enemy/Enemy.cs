@@ -4,34 +4,44 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+	public enum DeathReason {
+		Kill, RoundClear
+	}
+
     public int damage;
     public int health;
     public float _speed;
     public float rotateSpeed;
 
-    private bool damageDelayCheak = true;
-
-    public PlayerHealth playerHealth;
     public Transform playerTransform;
     public Transform rayTransform;
 
     new private Rigidbody2D rigidbody;
 
+	private int playerDamage;
+	private bool damageDelayCheak = true;
+
+	private PlayerMove playerMove;
+	private PlayerHealth playerHealth;
+
     // Use this for initialization
     void Start()
     {
         StartCoroutine(CheckFoward());
+		playerDamage = Manager.Get<AbilityManager>().Get(AbilityType.Damage);
+
+		GameObject player = GameObject.Find("Player");
+		playerMove = player.GetComponent<PlayerMove>();
+		playerHealth = player.GetComponent<PlayerHealth>();
     }
 
     // Update is called once per frame
     void Update()
-    {
-        Vector3 movePos;
-
+	{
         Rotate();
 
+		Vector3 movePos;
         movePos = transform.right * _speed * Time.deltaTime;
-
         transform.position += movePos;
     }
 
@@ -49,11 +59,26 @@ public class Enemy : MonoBehaviour
     public void Damage(int value)
     {
         health -= value;
-        if (health <= 0)
-        {
-            Destroy(gameObject);
+		if (health <= 0) {
+			Death(DeathReason.Kill);
         }
     }
+
+	public void Death(DeathReason reason)
+	{
+		GetComponent<Collider2D>().enabled = false;
+		if (reason == DeathReason.Kill) {
+			Manager.Get<RoundManager>().KillEnemy(1);
+		}
+		Destroy(gameObject);
+	}
+
+	public void SetStrength(float strength) { 
+		damage = (int) strength * damage;
+		health = (int) strength * health;;
+		_speed *= strength;
+		rotateSpeed *= strength;
+	}
 
     private IEnumerator CheckFoward()
     {
@@ -78,21 +103,27 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerStay2D(Collider2D other)
     {
         if (damageDelayCheak == false || other.gameObject.tag != "Player")
         {
             return;
         }
 
-        playerHealth.Damage(damage);
-        StartCoroutine(DamageDelay());
+		if (playerMove.IsTransform()) {
+			Damage(playerDamage);
+			StartCoroutine(DamageDelay(0.2f));
+			return;
+		}
+
+		playerHealth.Damage(damage);
+		StartCoroutine(DamageDelay(0.4f));
     }
 
-    private IEnumerator DamageDelay()
+    private IEnumerator DamageDelay(float delay)
     {
         damageDelayCheak = false;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(delay);
         damageDelayCheak = true;
     }
 }
