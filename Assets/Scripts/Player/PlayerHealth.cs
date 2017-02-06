@@ -14,8 +14,11 @@ public class PlayerHealth : MonoBehaviour {
 
 	private int currentHealth;
 	private int currentStatus;
+	private Animator animator;
 
 	void Start () {
+		animator = GetComponent<Animator>();
+
 		healthSlider.maxValue = maxHealth;
 		healthSlider.value = maxHealth;
 
@@ -24,25 +27,36 @@ public class PlayerHealth : MonoBehaviour {
 	}
 
 	public void Damage(int damage) {
-		currentHealth -= damage;
-		if (currentHealth <= 0) {
-			GameOver();
-			currentHealth = 0;
-		}
-
-		SetStatusImage();
-		healthSlider.value = currentHealth;
+		Health -= damage;
 	}
 
     public void Healing()
     {
-        currentHealth = maxHealth;
+        Health = maxHealth;
     }
 
+	private int Health { 
+		get { return currentHealth; }
+		set {
+			currentHealth = value;
+			healthSlider.value = value;
+			SetStatusImage();
+
+			if (currentHealth <= 0) {
+				GameOver();
+				currentHealth = 0;
+			}
+
+			animator.SetInteger("Health", currentHealth);
+		}
+	}
+
 	private void GameOver() {
-		Debug.Log("GameOver!");
-		gameObject.SetActive(false);
-		// TODO gameover
+		StartCoroutine(Manager.Get<RoundManager>().GameOver());
+
+		GetComponent<PlayerMove>().enabled = false;
+		GetComponent<PlayerEnergy>().enabled = false;
+		enabled = false;
 	}
 
 	private void SetStatusImage() {

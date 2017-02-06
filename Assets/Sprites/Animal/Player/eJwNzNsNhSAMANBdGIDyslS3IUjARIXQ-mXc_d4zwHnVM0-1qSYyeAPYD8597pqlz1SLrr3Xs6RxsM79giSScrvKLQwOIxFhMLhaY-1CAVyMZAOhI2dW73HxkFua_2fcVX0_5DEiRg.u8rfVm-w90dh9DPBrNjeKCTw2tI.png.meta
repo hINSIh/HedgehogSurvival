@@ -1,12 +1,11 @@
 fileFormatVersion: 2
-guid: c2f42b807176740e4b55e585a10382a9
-timeCreated: 1485321554
+guid: 9509d21cca6ee42c68342c9127a1d477
+timeCreated: 1486316762
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: GoSumEe_dead_0
-    21300002: GoSumEe_dead_1
-    21300004: GoSumEe_dead_2
+    21300000: eJwNzNsNhSAMANBdGIDyslS3IUjARIXQ-mXc_d4zwHnVM0-1qSYyeAPYD8597pqlz1SLrr3Xs6RxsM79giSScrvKLQwOIxFhMLhaY-1CAVyMZAOhI2dW73HxkFua_2fcVX0_5DEiRg.u8rfVm-w90dh9DPBrNjeKCTw2tI_0
+    21300002: eJwNzNsNhSAMANBdGIDyslS3IUjARIXQ-mXc_d4zwHnVM0-1qSYyeAPYD8597pqlz1SLrr3Xs6RxsM79giSScrvKLQwOIxFhMLhaY-1CAVyMZAOhI2dW73HxkFua_2fcVX0_5DEiRg.u8rfVm-w90dh9DPBrNjeKCTw2tI_1
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -43,7 +42,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 130
+  spritePixelsToUnits: 100
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -89,39 +88,26 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: GoSumEe_dead_0
+      name: eJwNzNsNhSAMANBdGIDyslS3IUjARIXQ-mXc_d4zwHnVM0-1qSYyeAPYD8597pqlz1SLrr3Xs6RxsM79giSScrvKLQwOIxFhMLhaY-1CAVyMZAOhI2dW73HxkFua_2fcVX0_5DEiRg.u8rfVm-w90dh9DPBrNjeKCTw2tI_0
       rect:
         serializedVersion: 2
-        x: 26
-        y: 376
-        width: 203
-        height: 156
+        x: 0
+        y: 301
+        width: 300
+        height: 300
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: GoSumEe_dead_1
+      name: eJwNzNsNhSAMANBdGIDyslS3IUjARIXQ-mXc_d4zwHnVM0-1qSYyeAPYD8597pqlz1SLrr3Xs6RxsM79giSScrvKLQwOIxFhMLhaY-1CAVyMZAOhI2dW73HxkFua_2fcVX0_5DEiRg.u8rfVm-w90dh9DPBrNjeKCTw2tI_1
       rect:
         serializedVersion: 2
-        x: 310
-        y: 353
-        width: 221
-        height: 165
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: GoSumEe_dead_2
-      rect:
-        serializedVersion: 2
-        x: 326
-        y: 83
-        width: 220
-        height: 148
+        x: 0
+        y: 1
+        width: 300
+        height: 300
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

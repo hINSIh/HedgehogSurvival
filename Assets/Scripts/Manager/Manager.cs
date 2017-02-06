@@ -30,13 +30,18 @@ public class Manager : MonoBehaviour {
 		InitManagerScripts();
 	}
 
-	public static void RegisterManager(MonoBehaviour script) {
+	public static void RegisterManager(object script) {
 		instance.managerMap.Add(script.GetType(), script);
 	}
 
-	public static void UnregisterManager(MonoBehaviour script)
+	public static void UnregisterManager(object script)
 	{
 		instance.managerMap.Remove(script.GetType());
+	}
+
+	public static void UnregisterAll() {
+		instance.managerMap.Clear();
+		instance.InitManagerScripts();
 	}
 
 	private void InitManagerScripts() {

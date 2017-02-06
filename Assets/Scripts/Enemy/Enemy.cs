@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
 	private int playerDamage;
 	private bool damageDelayCheak = true;
 
-	private PlayerMove playerMove;
+	private PlayerEnergy playerEnergy;
 	private PlayerHealth playerHealth;
 
     // Use this for initialization
@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour
 		playerDamage = Manager.Get<AbilityManager>().Get(AbilityType.Damage);
 
 		GameObject player = GameObject.Find("Player");
-		playerMove = player.GetComponent<PlayerMove>();
+		playerEnergy = player.GetComponent<PlayerEnergy>();
 		playerHealth = player.GetComponent<PlayerHealth>();
     }
 
@@ -110,7 +110,7 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-		if (playerMove.IsTransform()) {
+		if (playerEnergy.IsRolling()) {
 			Damage(playerDamage);
 			StartCoroutine(DamageDelay(0.2f));
 			return;

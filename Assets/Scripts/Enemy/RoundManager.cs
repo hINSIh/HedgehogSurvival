@@ -39,6 +39,8 @@ public class RoundManager : MonoBehaviour
 	[Header("Map")]
 	public SpriteRenderer background;
 
+	public FadeOutLoadScene fadeOutLoadScene;
+
 	public Stage[] stages;
 
 	public float timeCounterDelay = 0.2f;
@@ -54,6 +56,9 @@ public class RoundManager : MonoBehaviour
 	private Round currentRound;
 	private float currentRoundTime;
 	private int currentRoundKill;
+
+	private float totalSurvivalTime;
+	private int totalKill;
 
 	private State roundState;
 
@@ -74,6 +79,7 @@ public class RoundManager : MonoBehaviour
 
 	public void KillEnemy(int count) {
 		currentRoundKill += count;
+		totalKill += count;
 
 		float percent = GetPercent(currentRoundKill, currentRound.monsterCount);
 		deathProgressText.text = GetPercentFormat(percent);
@@ -81,6 +87,25 @@ public class RoundManager : MonoBehaviour
 		if (currentRoundKill >= currentRound.monsterCount) {
 			roundState = State.AllKill;
 		}
+	}
+
+	public IEnumerator GameOver() {
+		Enemy enemy;
+		for (int i = 0; i < enemyStorage.childCount; i++) {
+			enemy = enemyStorage.GetChild(i).GetComponent<Enemy>();
+			Destroy(enemy);
+		}
+
+		titleManager.AddSchedule(new TitleSchedule("Game Over...", 0.07f, 1.5f));
+		yield return titleManager.Run();
+
+		GameOverData data = new GameOverData();
+		data.survivalTime = Mathf.RoundToInt(totalSurvivalTime);
+		data.kill = totalKill;
+		Manager.RegisterManager(data);
+
+		fadeOutLoadScene.OnLoad();
+		StopAllCoroutines();
 	}
 
 	private IEnumerator StartGame()
@@ -148,6 +173,7 @@ public class RoundManager : MonoBehaviour
 			}
 
 			currentRoundTime += timeCounterDelay;
+			totalSurvivalTime += timeCounterDelay;
 			percent = GetPercent(currentRoundTime, currentRound.survivalTime);
 			timeProgressText.text = GetPercentFormat(percent);
 			yield return new WaitForSeconds(timeCounterDelay);

@@ -10,14 +10,18 @@ public class CoinTextUI : MonoBehaviour, ICoinChangedListner {
 	// Use this for initialization
 	void Start () {
 		text = GetComponent<Text>();
-		OnCoinChangedEvent(Manager.Get<CoinManager>().Coin);
-
-		Manager.Get<CoinManager>().AddChangedEventListener(this);
+		StartCoroutine(DelayStart());
 	}
 
 	void OnDestroy()
 	{
 		Manager.Get<CoinManager>().RemoveChangedEventListener(this);
+	}
+
+	IEnumerator DelayStart() {
+		yield return null;
+		OnCoinChangedEvent(Manager.Get<CoinManager>().Coin);
+		Manager.Get<CoinManager>().AddChangedEventListener(this);
 	}
 
 	public void OnCoinChangedEvent(int value) { 

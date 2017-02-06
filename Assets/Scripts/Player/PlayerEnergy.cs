@@ -5,8 +5,9 @@ using UnityEngine.UI;
 
 public class PlayerEnergy : MonoBehaviour {
 
-	public float maxEnergy = 100;
-	public float chargeSpeed = 1;
+	public float maxEnergy = 200;
+	public float chargeSpeed = 70;
+	public float spendSpeed = 50;
 	public Slider energySlider;
 	public Animator animator;
 
@@ -15,26 +16,35 @@ public class PlayerEnergy : MonoBehaviour {
 	public Button transformButton;
 
 	[Header("Upgrade")]
-	public float increaseEnergy;
-	public float increaseChargeSpeed;
+	public float increaseEnergy = 20;
+	public float increaseChargeSpeed = 15;
 
 	private float currentEnergy;
 	private bool chargeToggle;
+	private bool rolling;
 
 	// Use this for initialization
 	void Start () {
-		energySlider.maxValue = maxEnergy;
-		//energySlider.value = maxEnergy;
+		AbilityManager ability = Manager.Get<AbilityManager>();
+		int energyAbility = ability.Get(AbilityType.Energy) - 1;
 
-		//currentEnergy = maxEnergy;
+		maxEnergy += increaseEnergy * energyAbility;
+		chargeSpeed += increaseChargeSpeed * energyAbility;
+
+		energySlider.maxValue = maxEnergy;
+		energySlider.value = maxEnergy;
+
+		currentEnergy = maxEnergy;
 	}
 
 	void FixedUpdate() {
-		if (!chargeToggle) {
-			return;
+		if (rolling) {
+			Spend(spendSpeed * Time.fixedDeltaTime);
+		} else if (chargeToggle) {
+			Charge(chargeSpeed * Time.fixedDeltaTime);
 		}
 
-		Charge(chargeSpeed * Time.fixedDeltaTime);
+		SetButtons();
 	}
 
 	public void Spend(float value) {
@@ -58,13 +68,43 @@ public class PlayerEnergy : MonoBehaviour {
 		animator.SetBool("Charge", toggle);
 	}
 
+	public bool IsRolling()
+	{
+		return rolling;
+	}
+
 	public bool IsChargeToggle() {
 		return chargeToggle;
 	}
 
+	public float GetEnergy() {
+		return currentEnergy;
+	}
+
+	public void SetRolling(bool value)
+	{
+		if (!transformButton.interactable) {
+			return;
+		}
+
+		rolling = value;
+		animator.SetBool("Rolling", value);
+		if (value) {
+			animator.SetBool("Damage", false);
+		}
+	}
+
+	private void SetButtons() {
+		if (currentEnergy <= 0) {
+			SetRolling(false);
+			transformButton.interactable = false;
+		} else if (currentEnergy >= 10) { 
+			transformButton.interactable = true;
+		}
+	}
+
 	private void AddEnergy(float value) {
 		currentEnergy += value;
-		Debug.Log(currentEnergy);
 		currentEnergy = Mathf.Clamp(currentEnergy, 0, maxEnergy);
 
 		energySlider.value = currentEnergy;

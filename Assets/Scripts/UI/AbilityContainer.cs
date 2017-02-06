@@ -35,12 +35,18 @@ public class AbilityContainer : MonoBehaviour, ICoinChangedListner {
 	private const string levelText = "레벨 {0}";
 
 	void Start() {
-		Setup();
-		Manager.Get<CoinManager>().AddChangedEventListener(this);
+		StartCoroutine(DelayStart());
 	}
 
 	void OnDestroy() {
 		Manager.Get<CoinManager>().RemoveChangedEventListener(this);
+	}
+
+	IEnumerator DelayStart()
+	{
+		yield return null;
+		Setup();
+		Manager.Get<CoinManager>().AddChangedEventListener(this);
 	}
 
 	public void UpgradeClick() {

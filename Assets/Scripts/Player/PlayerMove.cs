@@ -24,8 +24,6 @@ public class PlayerMove : MonoBehaviour
 	private LimitArea limitArea;
 	private Vector3 inputVector;
 
-	private bool isTransform;
-
 	// Use this for initialization
 	void Start()
 	{
@@ -54,20 +52,6 @@ public class PlayerMove : MonoBehaviour
 		Rotate();
 	}
 
-	public bool IsTransform() {
-		return isTransform;
-	}
-
-	public void SetTransform(bool value)
-	{
-		isTransform = value;
-		animator.SetBool("Transform", value);
-		if (value)
-		{
-			animator.SetBool("Damage", false);
-		}
-	}
-
 	private void SetupLimitArea()
 	{
 		limitArea = MapManager.LimitArea.AddMargin(limitPadding);
@@ -83,15 +67,14 @@ public class PlayerMove : MonoBehaviour
 
 	private void Move()
 	{
-		float speed = isTransform ? transformMoveSpeed : moveSpeed;
+		float speed = playerEnergy.IsRolling() ? transformMoveSpeed : moveSpeed;
 		Vector3 movePos = transform.right * inputVector.magnitude * speed * Time.fixedDeltaTime;
 		rigidbody.position = limitArea.Clamp(transform.position + movePos);
 	}
 
 	void OnTriggerStay2D(Collider2D other)
 	{
-		Debug.Log(Time.time);
-		if (animator.GetBool("Damage") || animator.GetBool("Transform") || other.gameObject.tag != "Enemy")
+		if (animator.GetBool("Damage") || animator.GetBool("Rolling") || other.gameObject.tag != "Enemy")
 		{
 			return;
 		}

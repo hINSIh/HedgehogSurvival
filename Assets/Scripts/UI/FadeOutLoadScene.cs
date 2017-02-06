@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StartButton : MonoBehaviour {
+public class FadeOutLoadScene : MonoBehaviour {
 
+	public int sceneBuildIndex;
 	public Image fadeOutImage;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-
-	public void OnClick() {
+	public void OnLoad() {
 		StartCoroutine(StartGame());
 	}
 
@@ -24,6 +20,6 @@ public class StartButton : MonoBehaviour {
 			yield return null;
 		}
 
-		UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+		UnityEngine.SceneManagement.SceneManager.LoadScene(sceneBuildIndex);
 	}
 }
