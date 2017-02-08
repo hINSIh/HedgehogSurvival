@@ -81,7 +81,12 @@ public class PlayerEnergy : MonoBehaviour {
 		return currentEnergy;
 	}
 
-	public void SetRolling(bool value)
+    public void GetEnergyKit()
+    {
+        AddEnergy(maxEnergy / 2); 
+    }
+
+    public void SetRolling(bool value)
 	{
 		if (!transformButton.interactable) {
 			return;

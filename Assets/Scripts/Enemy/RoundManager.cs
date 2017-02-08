@@ -25,7 +25,9 @@ public class RoundManager : MonoBehaviour
 		Spawning, AllKill, Survive, Idle
 	}
 
-	[Header("UI")]
+    public ItemManager itemManager;
+
+    [Header("UI")]
 	public Text roundText;
 	public Text deathProgressText;
 	public Text timeProgressText;
@@ -63,7 +65,6 @@ public class RoundManager : MonoBehaviour
 	private State roundState;
 
 	private Transform enemyStorage;
-
 	// Use this for initialization
 	void Start()
 	{
@@ -91,7 +92,8 @@ public class RoundManager : MonoBehaviour
 
 	public IEnumerator GameOver() {
 		Enemy enemy;
-		for (int i = 0; i < enemyStorage.childCount; i++) {
+
+        for (int i = 0; i < enemyStorage.childCount; i++) {
 			enemy = enemyStorage.GetChild(i).GetComponent<Enemy>();
 			Destroy(enemy);
 		}
@@ -106,7 +108,8 @@ public class RoundManager : MonoBehaviour
 
 		fadeOutLoadScene.OnLoad();
 		StopAllCoroutines();
-	}
+        itemManager.gameSituation = false;//여기로 진입하면 멈춤
+    }
 
 	private IEnumerator StartGame()
 	{
@@ -115,12 +118,13 @@ public class RoundManager : MonoBehaviour
 			background.sprite = stage.map;
 			yield return StartRound(stage);
 		}
-	}
+        itemManager.gameSituation = false;//여기로 진입하면 멈춤
+    }
 
 	private IEnumerator StartRound(Stage stage) {
-		for (roundIndex = 0; roundIndex < stage.rounds.Length; roundIndex++)
-		{
-			roundText.text = string.Format("{0} - {1}", stageIndex + 1, roundIndex + 1);
+        for (roundIndex = 0; roundIndex < stage.rounds.Length; roundIndex++)
+        { 
+            roundText.text = string.Format("{0} - {1}", stageIndex + 1, roundIndex + 1);
 			messageRound.message = string.Format(titleRoundFormat, stageIndex + 1, roundIndex + 1);
 			titleManager.AddSchedule(messageRound);
 			yield return titleManager.Run();
@@ -129,9 +133,10 @@ public class RoundManager : MonoBehaviour
 			roundState = State.Spawning;
 
 			StartCoroutine(StartTimeCounter());
-			yield return StartMonsterSpawn(stage, currentRound);
+            itemManager.gameSituation = true; //여기로 진입하면 멈춤
+            yield return StartMonsterSpawn(stage, currentRound);
 
-			while (roundState == State.Spawning) {
+            while (roundState == State.Spawning) {
 				yield return null;
 			}
 

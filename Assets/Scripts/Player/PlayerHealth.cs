@@ -35,11 +35,11 @@ public class PlayerHealth : MonoBehaviour {
         Health = maxHealth;
     }
 
-	private int Health { 
+    private int Health { 
 		get { return currentHealth; }
 		set {
 			currentHealth = value;
-			healthSlider.value = value;
+            healthSlider.value = currentHealth;
 			SetStatusImage();
 
 			if (currentHealth <= 0) {

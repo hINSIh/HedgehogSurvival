@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthKit : MonoBehaviour {
+public class EnergyKit : MonoBehaviour
+{
 
-    public PlayerHealth playerHealth;
+    public PlayerEnergy playerEnergy;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.tag != "Player")
+        if (other.gameObject.tag != "Player")
         {
             return;
         }
 
-        playerHealth.Healing();
+        playerEnergy.GetEnergyKit();
 
         Destroy(gameObject);
     }
 }
-
