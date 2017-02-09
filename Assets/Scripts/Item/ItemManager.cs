@@ -1,8 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ItemManager : MonoBehaviour {
+
+    [Header("Other")]
+    public int healthKitProbability;
+    public bool gameSituation = true;
 
     [Header("Items")]
     public HealthKit healthKit;
@@ -21,8 +26,6 @@ public class ItemManager : MonoBehaviour {
     [Header("Map")]
     public SpriteRenderer background;
     public FadeOutLoadScene fadeOutLoadScene;
-
-    public bool gameSituation = true;
 
     private Transform itemStorage;
     // Use this for initialization
@@ -43,7 +46,7 @@ public class ItemManager : MonoBehaviour {
         while(gameSituation)
         {
             yield return spawnDelay;
-            int randomSpawn = Random.Range(0, 10);
+            int randomSpawn = Random.Range(0, healthKitProbability);
 
             if(randomSpawn == 0)
             {

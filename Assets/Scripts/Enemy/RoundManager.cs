@@ -108,7 +108,7 @@ public class RoundManager : MonoBehaviour
 
 		fadeOutLoadScene.OnLoad();
 		StopAllCoroutines();
-        itemManager.gameSituation = false;//여기로 진입하면 멈춤
+        itemManager.gameSituation = false;
     }
 
 	private IEnumerator StartGame()
@@ -118,7 +118,7 @@ public class RoundManager : MonoBehaviour
 			background.sprite = stage.map;
 			yield return StartRound(stage);
 		}
-        itemManager.gameSituation = false;//여기로 진입하면 멈춤
+        itemManager.gameSituation = false;
     }
 
 	private IEnumerator StartRound(Stage stage) {
@@ -132,8 +132,8 @@ public class RoundManager : MonoBehaviour
 			currentRound = stage.rounds[roundIndex];
 			roundState = State.Spawning;
 
-			StartCoroutine(StartTimeCounter());
-            itemManager.gameSituation = true; //여기로 진입하면 멈춤
+            itemManager.gameSituation = true;
+            StartCoroutine(StartTimeCounter());
             yield return StartMonsterSpawn(stage, currentRound);
 
             while (roundState == State.Spawning) {
