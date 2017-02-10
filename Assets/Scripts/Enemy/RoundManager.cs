@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 [System.Serializable]
 public class Stage {
-	public Sprite map;
+    public AudioClip stageAudio;
+    public Sprite map;
 	public Round[] rounds;
 	public Enemy[] enemys;
 }
@@ -25,7 +26,10 @@ public class RoundManager : MonoBehaviour
 		Spawning, AllKill, Survive, Idle
 	}
 
+    public AudioSource audio;
+
     public ItemManager itemManager;
+    public BgmManager bgmManager;
 
     [Header("UI")]
 	public Text roundText;
@@ -81,7 +85,6 @@ public class RoundManager : MonoBehaviour
 	public void KillEnemy(int count) {
 		currentRoundKill += count;
 		totalKill += count;
-
 		float percent = GetPercent(currentRoundKill, currentRound.monsterCount);
 		deathProgressText.text = GetPercentFormat(percent);
 
@@ -115,8 +118,11 @@ public class RoundManager : MonoBehaviour
 	{
 		for (stageIndex = 0; stageIndex < stages.Length; stageIndex++) {
 			Stage stage = stages[stageIndex];
-			background.sprite = stage.map;
-			yield return StartRound(stage);
+            background.sprite = stage.map;
+            this.audio.Stop();
+            this.audio.clip = stage.stageAudio;
+            this.audio.Play();
+            yield return StartRound(stage);
 		}
         itemManager.gameSituation = false;
     }
