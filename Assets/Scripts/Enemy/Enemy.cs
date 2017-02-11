@@ -1,49 +1,83 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using UnityEditor.Animations;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, Damageable
 {
 	public enum DeathReason {
 		Kill, RoundClear
 	}
 
+	[Header("Death change sprite")]
+	public Sprite deathSprite;
+
+	[Header("Ability")]
     public int damage;
     public int health;
-    public float _speed;
+	public float moveSpeed;
     public float rotateSpeed;
+	public float damageDelay;
 
+	[Header("Gameobjet Transform")]
     public Transform playerTransform;
     public Transform rayTransform;
 
     new private Rigidbody2D rigidbody;
+	private Animator animator;
+	private SpriteRenderer spriteRenderer;
 
-	private int playerDamage;
-	private bool damageDelayCheak = true;
+	private bool canMove = true;
+	private bool canDamage = true;
+	private bool isDeath = false;
 
-	private PlayerEnergy playerEnergy;
-	private PlayerHealth playerHealth;
+	private Player player;
 
     // Use this for initialization
     void Start()
     {
         StartCoroutine(CheckFoward());
-		playerDamage = Manager.Get<AbilityManager>().Get(AbilityType.Damage);
+		animator = GetComponent<Animator>();
+		spriteRenderer = GetComponent<SpriteRenderer>();
 
-		GameObject player = GameObject.Find("Player");
-		playerEnergy = player.GetComponent<PlayerEnergy>();
-		playerHealth = player.GetComponent<PlayerHealth>();
+		player = Manager.Get<Player>();
     }
 
     // Update is called once per frame
     void Update()
 	{
-        Rotate();
+		if (!canMove || isDeath) {
+			return;
+		}
 
-		Vector3 movePos;
-        movePos = transform.right * _speed * Time.deltaTime;
-        transform.position += movePos;
+        Rotate();
+		Move();
     }
+
+	void OnTriggerStay2D(Collider2D other)
+	{
+		if (!other.gameObject.CompareTag("Player") || isDeath)
+		{
+			return;
+		}
+
+		canMove = false;
+		player.TryDamage(this);
+	}
+
+	void OnTriggerExit2D(Collider2D other)
+	{
+		if (other.gameObject.CompareTag("Player"))
+		{
+			canMove = true;
+		}
+	}
+
+	private void Move() {
+		Vector3 movePos = transform.right * moveSpeed * Time.deltaTime;
+		transform.position += movePos;
+	}
 
     private void Rotate()
     {
@@ -56,27 +90,46 @@ public class Enemy : MonoBehaviour
         transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, rotateSpeed);
     }
 
-    public void Damage(int value)
+    private int Health
     {
-        health -= value;
-		if (health <= 0) {
-			Death(DeathReason.Kill);
-        }
+		get { return health; }
+		set
+		{
+			health = value;
+			if (health <= 0)
+			{
+				Death(DeathReason.Kill);
+			}
+		}
     }
 
 	public void Death(DeathReason reason)
 	{
-		GetComponent<Collider2D>().enabled = false;
-		if (reason == DeathReason.Kill) {
-			Manager.Get<RoundManager>().KillEnemy(1);
+		if (isDeath) {
+			return;
 		}
-		Destroy(gameObject);
+
+		isDeath = true;
+		Destroy(gameObject, 2);
+		StartCoroutine(AnimationDeath());
+	}
+
+	private IEnumerator AnimationDeath() {
+		animator.enabled = false;
+		spriteRenderer.sprite = deathSprite;
+
+		float normalize;
+		for (float i = 255; i >= 0; i -= 5) {
+			normalize = i / 255;
+			spriteRenderer.color = new Color(normalize, normalize, normalize, normalize);
+			yield return null;
+		}
 	}
 
 	public void SetStrength(float strength) { 
 		damage = (int) strength * damage;
-		health = (int) strength * health;;
-		_speed *= strength;
+		Health = (int) strength * Health;
+		moveSpeed *= strength;
 		rotateSpeed *= strength;
 	}
 
@@ -95,35 +148,43 @@ public class Enemy : MonoBehaviour
                 continue;
             }
 
-            float tempSpeed = _speed;
-            _speed = _speed * Random.Range(3, 7) * 0.1f;
+            float tempSpeed = moveSpeed;
+            moveSpeed = moveSpeed * Random.Range(3, 7) * 0.1f;
             yield return new WaitForSeconds(0.2f);
 
-            _speed = tempSpeed;
+            moveSpeed = tempSpeed;
         }
     }
 
-    void OnTriggerStay2D(Collider2D other)
-    {
-        if (damageDelayCheak == false || other.gameObject.tag != "Player")
-        {
-            return;
-        }
-
-		if (playerEnergy.IsRolling()) {
-			Damage(playerDamage);
-			StartCoroutine(DamageDelay(0.2f));
+	#region Damageable
+	public void TryDamage(Damageable other)
+	{
+		if (!CanDamage())
+		{
 			return;
 		}
 
-		playerHealth.Damage(damage);
-		StartCoroutine(DamageDelay(0.4f));
-    }
+		Health -= other.GetDamage();
+		StartCoroutine(WaitForDamageDelay());
+	}
 
-    private IEnumerator DamageDelay(float delay)
-    {
-        damageDelayCheak = false;
-        yield return new WaitForSeconds(delay);
-        damageDelayCheak = true;
-    }
+	public bool CanDamage()
+	{
+		return canDamage && !isDeath;
+	}
+
+	public int GetDamage()
+	{
+		return damage;
+	}
+
+	private IEnumerator WaitForDamageDelay()
+	{
+		canDamage = false;
+		animator.SetBool("Damage", true);
+		yield return new WaitForSeconds(damageDelay);
+		animator.SetBool("Damage", false);
+		canDamage = true;
+	}
+	#endregion
 }

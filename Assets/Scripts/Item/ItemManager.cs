@@ -19,13 +19,7 @@ public class ItemManager : MonoBehaviour {
     public float spawnViewportMargin;
 
     [Header("Player")]
-    public Transform player;
-    public PlayerHealth playerHealth;
-    public PlayerEnergy playerEnergy;
-
-    [Header("Map")]
-    public SpriteRenderer background;
-    public FadeOutLoadScene fadeOutLoadScene;
+    public Player player;
 
     private Transform itemStorage;
     // Use this for initialization
@@ -56,7 +50,7 @@ public class ItemManager : MonoBehaviour {
                 healthKitObject.transform.position = GetRandomSpawnPoint();
                 healthKitObject.transform.SetParent(itemStorage);
 
-                healthKitObject.playerHealth = playerHealth;
+                healthKitObject.player = player;
             }
             else
             {
@@ -65,7 +59,7 @@ public class ItemManager : MonoBehaviour {
                 enrgyKitObject.transform.position = GetRandomSpawnPoint();
                 enrgyKitObject.transform.SetParent(itemStorage);
 
-                enrgyKitObject.playerEnergy = playerEnergy;
+                enrgyKitObject.player = player;
             }          
         }
     }

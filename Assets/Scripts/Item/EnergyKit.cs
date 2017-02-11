@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class EnergyKit : MonoBehaviour
 {
-
-    public PlayerEnergy playerEnergy;
+    public Player player;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -14,8 +13,7 @@ public class EnergyKit : MonoBehaviour
             return;
         }
 
-        playerEnergy.GetEnergyKit();
-
+		player.Energy += player.energyData.maxEnergy / 2;
         Destroy(gameObject);
     }
 }

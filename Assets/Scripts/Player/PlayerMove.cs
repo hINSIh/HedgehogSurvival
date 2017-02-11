@@ -1,90 +1,88 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class PlayerMove : MonoBehaviour
 {
 	public Joystick joystick;
 
-	[Header("Speed")]
-	public float moveSpeed;
-	public float transformMoveSpeed;
-	public float rotateSpeed;
-
 	[Header("Move limit option")]
 	public float limitPadding;
 
-	[Header("Script")]
-	public PlayerHealth playerHealth;
-	public PlayerEnergy playerEnergy;
-
 	new private Rigidbody2D rigidbody;
-	private Animator animator;
+	private Player.MoveData data;
 	private LimitArea limitArea;
 	private Vector3 inputVector;
+
+	private float moveSpeed;
 
 	// Use this for initialization
 	void Start()
 	{
-		animator = GetComponent<Animator>();
+		AbilityManager ability = Manager.Get<AbilityManager>();
+		int energyAbilityLevel = ability.Get(AbilityType.RotateSpeed) - 1;
+
 		rigidbody = GetComponent<Rigidbody2D>();
+		data = Manager.Get<Player>().moveData;
+		data.SetAbilityLevel(energyAbilityLevel);
 		SetupLimitArea();
 	}
 
-	// Update is called once per frame
-	void FixedUpdate()
+	public void TryMove(Player player)
 	{
-		if (playerEnergy.IsChargeToggle()) {
-			return;
+		UpdateInputValue();
+
+		bool canMove = CanMove(player);
+		player.animator.SetBool("Move", canMove);
+
+		if (canMove)
+		{
+			Move(player);
+			Rotate(player);
+		}
+	}
+
+	public void Move(Player player) {
+		if (StateEquals(player, typeof(RollingState))) {
+			moveSpeed = data.moveSpeed * 1.4f;
+		} else {
+			moveSpeed = data.moveSpeed;
 		}
 
+		Vector3 movePos = transform.right * inputVector.magnitude
+		                           * moveSpeed * Time.fixedDeltaTime;
+		rigidbody.position = limitArea.Clamp(transform.position + movePos);
+	}
+
+	public void Rotate(Player player) {
+		float angle = Mathf.Atan2(inputVector.y, inputVector.x) * Mathf.Rad2Deg;
+
+		Quaternion newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
+		transform.rotation = 
+			Quaternion.RotateTowards(transform.rotation, newRotation, data.rotateSpeed);
+	}
+
+	private bool StateEquals(Player player, Type state) {
+		return player.State.GetType() == state;
+	}
+
+	private void UpdateInputValue() { 
 		inputVector = joystick.GetInputVector();
+	}
 
-		bool isMove = inputVector.sqrMagnitude > 0;
-		animator.SetBool("Move", isMove);
-
-		if (!isMove) {
-			return;
+	private bool CanMove(Player player)
+	{
+		if (StateEquals(player, typeof(ChargeState))) {
+			return false;
 		}
 
-		Move();
-		Rotate();
+		return inputVector.sqrMagnitude > 0;
 	}
 
 	private void SetupLimitArea()
 	{
 		limitArea = MapManager.LimitArea.AddMargin(limitPadding);
-	}
-
-	private void Rotate()
-	{
-		float angle = Mathf.Atan2(inputVector.y, inputVector.x) * Mathf.Rad2Deg;
-
-		Quaternion newRotation = Quaternion.AngleAxis(angle, Vector3.forward);
-		transform.rotation = Quaternion.RotateTowards(transform.rotation, newRotation, rotateSpeed);
-	}
-
-	private void Move()
-	{
-		float speed = playerEnergy.IsRolling() ? transformMoveSpeed : moveSpeed;
-		Vector3 movePos = transform.right * inputVector.magnitude * speed * Time.fixedDeltaTime;
-		rigidbody.position = limitArea.Clamp(transform.position + movePos);
-	}
-
-	void OnTriggerStay2D(Collider2D other)
-	{
-		if (animator.GetBool("Damage") || animator.GetBool("Rolling") || other.gameObject.tag != "Enemy")
-		{
-			return;
-		}
-
-		StartCoroutine(DamageAnimation());
-	}
-
-	IEnumerator DamageAnimation() {
-		animator.SetBool("Damage", true);
-		yield return new WaitForSeconds(0.5f);
-		animator.SetBool("Damage", false);
 	}
 }

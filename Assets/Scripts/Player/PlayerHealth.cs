@@ -4,63 +4,41 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour {
-
-	public int maxHealth;
 	public Slider healthSlider;
 
 	[Header("Status UI")]
 	public Image statusImage;
 	public Sprite[] statusSprites;
 
+	private Player.HealthData data;
 	private int currentHealth;
 	private int currentStatus;
-	private Animator animator;
 
 	void Start () {
-		animator = GetComponent<Animator>();
+		AbilityManager ability = Manager.Get<AbilityManager>();
+		int healthAbilityLevel = ability.Get(AbilityType.Health) - 1;
 
-		healthSlider.maxValue = maxHealth;
-		healthSlider.value = maxHealth;
+		data = Manager.Get<Player>().healthData;
+		data.SetAbilityLevel(healthAbilityLevel);
 
-		currentHealth = maxHealth;
+		healthSlider.maxValue = data.maxHealth;
+		healthSlider.value = data.maxHealth;
+
+		Health = data.maxHealth;
 		SetStatusImage();
 	}
 
-	public void Damage(int damage) {
-		Health -= damage;
-	}
-
-    public void Healing()
-    {
-        Health = maxHealth;
-    }
-
-    private int Health { 
+	public int Health { 
 		get { return currentHealth; }
 		set {
 			currentHealth = value;
             healthSlider.value = currentHealth;
 			SetStatusImage();
-
-			if (currentHealth <= 0) {
-				GameOver();
-				currentHealth = 0;
-			}
-
-			animator.SetInteger("Health", currentHealth);
 		}
 	}
 
-	private void GameOver() {
-		StartCoroutine(Manager.Get<RoundManager>().GameOver());
-
-		GetComponent<PlayerMove>().enabled = false;
-		GetComponent<PlayerEnergy>().enabled = false;
-		enabled = false;
-	}
-
 	private void SetStatusImage() {
-		float unit = (float) maxHealth / statusSprites.Length;
+		float unit = (float) data.maxHealth / statusSprites.Length;
 		int result = 0;
 
 		for (int i = 1; i < statusSprites.Length; i++) {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HealthKit : MonoBehaviour {
 
-    public PlayerHealth playerHealth;
+    public Player player;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -13,8 +13,7 @@ public class HealthKit : MonoBehaviour {
             return;
         }
 
-        playerHealth.Healing();
-
+		player.Health = player.healthData.maxHealth;
         Destroy(gameObject);
     }
 }

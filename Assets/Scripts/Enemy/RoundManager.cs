@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 [System.Serializable]
 public class Stage {
-    public AudioClip stageAudio;
-    public Sprite map;
+	public Sprite map;
+		public AudioClip stageAudio;
 	public Round[] rounds;
 	public Enemy[] enemys;
 }
@@ -26,12 +26,12 @@ public class RoundManager : MonoBehaviour
 		Spawning, AllKill, Survive, Idle
 	}
 
-    public AudioSource audio;
+	public AudioSource audio;
 
-    public ItemManager itemManager;
-    public BgmManager bgmManager;
+	public ItemManager itemManager;
+	public BgmManager bgmManager;
 
-    [Header("UI")]
+	[Header("UI")]
 	public Text roundText;
 	public Text deathProgressText;
 	public Text timeProgressText;
@@ -69,10 +69,12 @@ public class RoundManager : MonoBehaviour
 	private State roundState;
 
 	private Transform enemyStorage;
+
 	// Use this for initialization
 	void Start()
 	{
 		Manager.RegisterManager(this);
+		Manager.Get<Player>().OnDeathEventListener += OnPlayerDeathEvent;
 
 		titleManager = Manager.Get<TitleManager>();
 		enemyStorage = new GameObject("EnemyStorage").transform;
@@ -85,6 +87,7 @@ public class RoundManager : MonoBehaviour
 	public void KillEnemy(int count) {
 		currentRoundKill += count;
 		totalKill += count;
+
 		float percent = GetPercent(currentRoundKill, currentRound.monsterCount);
 		deathProgressText.text = GetPercentFormat(percent);
 
@@ -93,10 +96,17 @@ public class RoundManager : MonoBehaviour
 		}
 	}
 
-	public IEnumerator GameOver() {
+	private void OnPlayerDeathEvent(DeathEvent e) {
+		e.GetPlayer().enabled = false;
+		StartCoroutine(GameOver());
+	}
+
+	public IEnumerator GameOver()
+	{
 		Enemy enemy;
 
-        for (int i = 0; i < enemyStorage.childCount; i++) {
+		for (int i = 0; i < enemyStorage.childCount; i++)
+		{
 			enemy = enemyStorage.GetChild(i).GetComponent<Enemy>();
 			Destroy(enemy);
 		}
@@ -111,26 +121,27 @@ public class RoundManager : MonoBehaviour
 
 		fadeOutLoadScene.OnLoad();
 		StopAllCoroutines();
-        itemManager.gameSituation = false;
-    }
+		itemManager.gameSituation = false;
+	}
 
 	private IEnumerator StartGame()
 	{
-		for (stageIndex = 0; stageIndex < stages.Length; stageIndex++) {
+		for (stageIndex = 0; stageIndex < stages.Length; stageIndex++)
+		{
 			Stage stage = stages[stageIndex];
-            background.sprite = stage.map;
-            this.audio.Stop();
-            this.audio.clip = stage.stageAudio;
-            this.audio.Play();
-            yield return StartRound(stage);
+			background.sprite = stage.map;
+			this.audio.Stop();
+			this.audio.clip = stage.stageAudio;
+			this.audio.Play();
+			yield return StartRound(stage);
 		}
-        itemManager.gameSituation = false;
-    }
+		itemManager.gameSituation = false;
+	}
 
 	private IEnumerator StartRound(Stage stage) {
-        for (roundIndex = 0; roundIndex < stage.rounds.Length; roundIndex++)
-        { 
-            roundText.text = string.Format("{0} - {1}", stageIndex + 1, roundIndex + 1);
+		for (roundIndex = 0; roundIndex < stage.rounds.Length; roundIndex++)
+		{
+			roundText.text = string.Format("{0} - {1}", stageIndex + 1, roundIndex + 1);
 			messageRound.message = string.Format(titleRoundFormat, stageIndex + 1, roundIndex + 1);
 			titleManager.AddSchedule(messageRound);
 			yield return titleManager.Run();
@@ -138,11 +149,11 @@ public class RoundManager : MonoBehaviour
 			currentRound = stage.rounds[roundIndex];
 			roundState = State.Spawning;
 
-            itemManager.gameSituation = true;
-            StartCoroutine(StartTimeCounter());
-            yield return StartMonsterSpawn(stage, currentRound);
+				itemManager.gameSituation = true;
+			StartCoroutine(StartTimeCounter());
+			yield return StartMonsterSpawn(stage, currentRound);
 
-            while (roundState == State.Spawning) {
+			while (roundState == State.Spawning) {
 				yield return null;
 			}
 
