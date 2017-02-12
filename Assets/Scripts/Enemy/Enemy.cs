@@ -6,6 +6,9 @@ using UnityEditor.Animations;
 
 public class Enemy : MonoBehaviour, Damageable
 {
+	public static event OnEnemyDeathEventHandler OnEnemyDeathEventListener;
+	public delegate void OnEnemyDeathEventHandler(EnemyDeathEvent e);
+
 	public enum DeathReason {
 		Kill, RoundClear
 	}
@@ -47,12 +50,15 @@ public class Enemy : MonoBehaviour, Damageable
     // Update is called once per frame
     void Update()
 	{
-		if (!canMove || isDeath) {
+		if (isDeath)
+		{
 			return;
 		}
 
-        Rotate();
-		Move();
+		Rotate();
+		if (canMove) {
+			Move();
+		}
     }
 
 	void OnTriggerStay2D(Collider2D other)
@@ -73,6 +79,10 @@ public class Enemy : MonoBehaviour, Damageable
 			canMove = true;
 		}
 	}
+
+	private static void OnPlayerDeathEvent(PlayerDeathEvent e) { 
+		
+	} 
 
 	private void Move() {
 		Vector3 movePos = transform.right * moveSpeed * Time.deltaTime;
@@ -108,6 +118,9 @@ public class Enemy : MonoBehaviour, Damageable
 		if (isDeath) {
 			return;
 		}
+
+		EnemyDeathEvent deathEvent = new EnemyDeathEvent(this, reason);
+		OnEnemyDeathEventListener(deathEvent);
 
 		isDeath = true;
 		Destroy(gameObject, 2);

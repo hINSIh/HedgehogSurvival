@@ -10,9 +10,10 @@ public class ChargeButton : MonoBehaviour, SkillButton {
 
 	void Start()
 	{
-		button = GetComponent<Button>();
+		Player.OnDamageEventListener += OnDamageEvent;
 		player = Manager.Get<Player>();
-		player.OnDamageEventListener += OnDamageEvent;
+
+		button = GetComponent<Button>();
 	}
 
 	public void OnPointerDown()
@@ -31,7 +32,7 @@ public class ChargeButton : MonoBehaviour, SkillButton {
 		isPointerDown = false;
 	}
 
-	private void OnDamageEvent(DamageEvent e)
+	private void OnDamageEvent(PlayerDamageEvent e)
 	{
 		if (isPointerDown)
 		{

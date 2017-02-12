@@ -8,10 +8,14 @@ public class ChargeFixedRotation : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		Manager.Get<Player>().OnStateChangedEventListener += OnStateChangedEvent;
+		Player.OnStateChangedEventListener += OnStateChangedEvent;
 	}
 
-	private void OnStateChangedEvent(StateChangedEvent e) {
+	void Destory() {
+		StopAllCoroutines();
+	}
+
+	private void OnStateChangedEvent(PlayerStateChangedEvent e) {
 		if (EqualsState(e.changedState, typeof(ChargeState)))
 		{
 			StartCoroutine(ChargeIn());

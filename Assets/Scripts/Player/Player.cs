@@ -80,15 +80,15 @@ public class Player : MonoBehaviour, Damageable {
 	#endregion
 
 	#region Events
-	public delegate void OnDamageEventHandler(DamageEvent e);
-	public delegate void OnDeathEventHandler(DeathEvent e);
+	public delegate void OnDamageEventHandler(PlayerDamageEvent e);
+	public delegate void OnDeathEventHandler(PlayerDeathEvent e);
 	public delegate void OnEnergyChangedEventHandler(EnergyChangedEvent e);
-	public delegate void OnStateChangedEventHandler(StateChangedEvent e);
+	public delegate void OnStateChangedEventHandler(PlayerStateChangedEvent e);
 
-	public event OnDamageEventHandler OnDamageEventListener;
-	public event OnDeathEventHandler OnDeathEventListener;
-	public event OnEnergyChangedEventHandler OnEnergyChangedEventListener;
-	public event OnStateChangedEventHandler OnStateChangedEventListener;
+	public static event OnDamageEventHandler OnDamageEventListener;
+	public static event OnDeathEventHandler OnDeathEventListener;
+	public static event OnEnergyChangedEventHandler OnEnergyChangedEventListener;
+	public static event OnStateChangedEventHandler OnStateChangedEventListener;
 	#endregion
 
 	[Header("Abilites")]
@@ -131,12 +131,19 @@ public class Player : MonoBehaviour, Damageable {
 		}
 	}
 
+	void OnDisable() { 
+		OnDamageEventListener = delegate {};
+		OnDeathEventListener = delegate {};
+		OnEnergyChangedEventListener = delegate { };
+		OnStateChangedEventListener = delegate { };
+	}
+
 	public int Health { 
 		get { return healthScript.Health; }
 		set { 
 			if (value < Health) {
 				int damage = Health - value;
-				DamageEvent damageEvent = new DamageEvent(this, damage, healthScript.Health);
+				PlayerDamageEvent damageEvent = new PlayerDamageEvent(this, damage, healthScript.Health);
 				OnDamageEventListener(damageEvent);
 
 				if (damageEvent.IsCancelled()) {
@@ -148,7 +155,7 @@ public class Player : MonoBehaviour, Damageable {
 			animator.SetInteger("Health", Health);
 
 			if (Health <= 0 && enabled) {
-				OnDeathEventListener(new DeathEvent(this));
+				OnDeathEventListener(new PlayerDeathEvent(this));
 			}
 		}
 	}
@@ -191,7 +198,7 @@ public class Player : MonoBehaviour, Damageable {
 
 			if (OnStateChangedEventListener != null)
 			{
-				OnStateChangedEventListener(new StateChangedEvent(this, state,  value));
+				OnStateChangedEventListener(new PlayerStateChangedEvent(this, state,  value));
 			}
 
 			state = value;

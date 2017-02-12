@@ -74,7 +74,8 @@ public class RoundManager : MonoBehaviour
 	void Start()
 	{
 		Manager.RegisterManager(this);
-		Manager.Get<Player>().OnDeathEventListener += OnPlayerDeathEvent;
+		Player.OnDeathEventListener += OnPlayerDeathEvent;
+		Enemy.OnEnemyDeathEventListener += OnEnemyDeathEvent;
 
 		titleManager = Manager.Get<TitleManager>();
 		enemyStorage = new GameObject("EnemyStorage").transform;
@@ -84,9 +85,13 @@ public class RoundManager : MonoBehaviour
 		StartCoroutine(StartGame());
 	}
 
-	public void KillEnemy(int count) {
-		currentRoundKill += count;
-		totalKill += count;
+	public void OnEnemyDeathEvent(EnemyDeathEvent e) {
+		if (e.reason == Enemy.DeathReason.RoundClear) {
+			return;
+		}
+
+		currentRoundKill ++;
+		totalKill ++;
 
 		float percent = GetPercent(currentRoundKill, currentRound.monsterCount);
 		deathProgressText.text = GetPercentFormat(percent);
@@ -96,7 +101,7 @@ public class RoundManager : MonoBehaviour
 		}
 	}
 
-	private void OnPlayerDeathEvent(DeathEvent e) {
+	private void OnPlayerDeathEvent(PlayerDeathEvent e) {
 		e.GetPlayer().enabled = false;
 		StartCoroutine(GameOver());
 	}

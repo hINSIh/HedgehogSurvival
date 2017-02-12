@@ -2,36 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Event
+public class PlayerEvent : Event
 {
-}
-
-public abstract class CancellableEvent : Cancellable
-{
-	private bool cancelled;
-
-	public void SetCancelled(bool cancel)
-	{
-		cancelled = cancel;
-	}
-
-	public bool IsCancelled()
-	{
-		return cancelled;
-	}
-}
-
-public interface Cancellable
-{
-	void SetCancelled(bool cancel);
-
-	bool IsCancelled();
-}
-
-public class PlayerEvent {
 	private Player player;
 
-	public PlayerEvent(Player player) {
+	public PlayerEvent(Player player)
+	{
 		this.player = player;
 	}
 
@@ -41,13 +17,13 @@ public class PlayerEvent {
 	}
 }
 
-public class DamageEvent : PlayerEvent, Cancellable
+public class PlayerDamageEvent : PlayerEvent, Cancellable
 {
 	private bool cancelled;
 	private int damage;
 	private int currentHealth;
 
-	public DamageEvent(Player player, int damage, int currentHealth) : base(player)
+	public PlayerDamageEvent(Player player, int damage, int currentHealth) : base(player)
 	{
 		this.damage = damage;
 		this.currentHealth = currentHealth;
@@ -77,7 +53,8 @@ public class DamageEvent : PlayerEvent, Cancellable
 
 public class EnergyChangedEvent : PlayerEvent, Cancellable
 {
-	public enum ChangeType { 
+	public enum ChangeType
+	{
 		Spend, Charge
 	}
 
@@ -91,7 +68,8 @@ public class EnergyChangedEvent : PlayerEvent, Cancellable
 	private float changeValue;
 
 	public EnergyChangedEvent(Player player, ChangeType changeType,
-	                         float changeValue, float fromEnergy) : base(player) {
+							 float changeValue, float fromEnergy) : base(player)
+	{
 		this.changeType = changeType;
 		this.changeValue = changeValue;
 		this.fromEnergy = fromEnergy;
@@ -100,7 +78,7 @@ public class EnergyChangedEvent : PlayerEvent, Cancellable
 		{
 			toEnergy = fromEnergy + changeValue;
 		}
-		else { 
+		else {
 			toEnergy = fromEnergy - changeValue;
 		}
 
@@ -124,17 +102,19 @@ public class EnergyChangedEvent : PlayerEvent, Cancellable
 	}
 }
 
-public class StateChangedEvent : PlayerEvent {
+public class PlayerStateChangedEvent : PlayerEvent
+{
 	public readonly IPlayerState fromState;
 	public readonly IPlayerState changedState;
 
-	public StateChangedEvent(Player player, IPlayerState fromState, IPlayerState changedState) : base(player) {
+	public PlayerStateChangedEvent(Player player, IPlayerState fromState, IPlayerState changedState) : base(player)
+	{
 		this.fromState = fromState;
 		this.changedState = changedState;
 	}
 }
 
-public class DeathEvent : PlayerEvent
+public class PlayerDeathEvent : PlayerEvent
 {
-	public DeathEvent(Player player) : base(player) { }
+	public PlayerDeathEvent(Player player) : base(player) { }
 }
