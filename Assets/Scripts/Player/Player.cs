@@ -114,6 +114,11 @@ public class Player : MonoBehaviour, Damageable {
 	private bool canDamage = true;
 
 	void Awake () {
+		OnDamageEventListener = delegate { };
+		OnDeathEventListener = delegate { };
+		OnEnergyChangedEventListener = delegate { };
+		OnStateChangedEventListener = delegate { };
+
 		Manager.RegisterManager(this);
 		State = stateStorage.normalState;
 	}
@@ -129,13 +134,6 @@ public class Player : MonoBehaviour, Damageable {
 		if (damageable != null) {
 			state.OnTriggerStay(this, damageable);
 		}
-	}
-
-	void OnDisable() { 
-		OnDamageEventListener = delegate {};
-		OnDeathEventListener = delegate {};
-		OnEnergyChangedEventListener = delegate { };
-		OnStateChangedEventListener = delegate { };
 	}
 
 	public int Health { 

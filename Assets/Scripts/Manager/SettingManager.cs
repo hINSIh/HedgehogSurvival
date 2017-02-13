@@ -2,33 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface ISavable<T>
+{
+	void Save(string prefsNode, T value);
+
+	T Get(string prefsNode);
+}
+
+public class Option<T>
+{
+	protected T value;
+	protected string prefsNode;
+	protected ISavable<T> savable;
+
+	public Option(string prefsNode, ISavable<T> savable)
+	{
+		this.prefsNode = prefsNode;
+		this.savable = savable;
+		value = savable.Get(prefsNode);
+	}
+
+	public virtual T Value
+	{
+		get { return value; }
+		set
+		{
+			this.value = value;
+			savable.Save(prefsNode, value);
+		}
+	}
+}
 public class SettingManager : MonoBehaviour {
-	private interface ISavable<T> {
-		void Save(string prefsNode, T value);
-
-		T Get(string prefsNode);
-	}
-
-	private class Option<T> {
-		private T value;
-		private string prefsNode;
-		private ISavable<T> savable;
-
-		public Option(string prefsNode, ISavable<T> savable) {
-			this.prefsNode = prefsNode;
-			this.savable = savable;
-			value = savable.Get(prefsNode);
-		}
-
-		public T Value {
-			get { return value; }
-			set { 
-				this.value = value;
-				savable.Save(prefsNode, value);
-			}
-		}
-	}
-
 	private class BoolSavable : ISavable<bool> {
 		public void Save(string prefsNode, bool value) {
 			PlayerPrefs.SetInt(prefsNode, value ? 1 : 0);
