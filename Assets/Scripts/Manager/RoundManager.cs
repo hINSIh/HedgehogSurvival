@@ -73,7 +73,12 @@ public class RoundManager : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		Manager.RegisterManager(this);
+        if(!Manager.Get<SettingManager>().BgmEnable)
+        {
+            this.audio.volume = 0;
+        }
+
+        Manager.RegisterManager(this);
 		Player.OnDeathEventHandler += OnPlayerDeathEvent;
 		Enemy.OnEnemyDeathEventHandler += OnEnemyDeathEvent;
 
@@ -272,9 +277,9 @@ public class RoundManager : MonoBehaviour
 		}
 	}
 
-	#region Random point
+    #region Random point
 
-	private Vector3 GetRandomSpawnPoint()
+    private Vector3 GetRandomSpawnPoint()
 	{
 		Vector3 result;
 		float x, y;
