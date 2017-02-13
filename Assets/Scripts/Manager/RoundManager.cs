@@ -142,18 +142,19 @@ public class RoundManager : MonoBehaviour
 		{
 			Stage stage = stages[stageIndex];
 			background.sprite = stage.map;
+            this.audio.Stop();
             this.audio.clip = stage.stageAudio;
 			this.audio.Play();
 			yield return StartRound(stage);
-            StartCoroutine(FadeOutBgm());
+            //StartCoroutine(FadeOutVolum());
 		}
 		itemManager.gameSituation = false;
 	}
 
-    private IEnumerator FadeOutBgm()
+    private IEnumerator FadeOutVolum()
     {
         float j = 1f;
-        for (float i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             if (j > 0)
                 j -= 0.1f;
