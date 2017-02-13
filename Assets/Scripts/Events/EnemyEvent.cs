@@ -10,6 +10,40 @@ public class EnemyEvent : Event {
 	}
 }
 
+public class EnemyDamageEvent : EnemyEvent, Cancellable
+{
+	private bool cancelled;
+	private int damage;
+	private int currentHealth;
+
+	public EnemyDamageEvent(Enemy enemy, int damage, int currentHealth) : base(enemy)
+	{
+		this.damage = damage;
+		this.currentHealth = currentHealth;
+	}
+
+	public int Damage
+	{
+		get { return damage; }
+		set { damage = value; }
+	}
+
+	public int CurrentHealth
+	{
+		get { return currentHealth; }
+	}
+
+	public void SetCancelled(bool cancel)
+	{
+		cancelled = cancel;
+	}
+
+	public bool IsCancelled()
+	{
+		return cancelled;
+	}
+}
+
 public class EnemyDeathEvent : EnemyEvent {
 	public readonly Enemy.DeathReason reason;
 

@@ -26,6 +26,10 @@ public class GameOverUI : MonoBehaviour {
 
 		Manager.Get<CoinManager>().Deposit(coin);
 		Manager.UnregisterAll();
+
+		AchievementManager achievementManager = Manager.Get<AchievementManager>();
+		achievementManager.survivalTime.Value = data.survivalTime;
+		achievementManager.kill.Value = data.kill;
 	}
 
 	private string GetTimeFormat() {

@@ -75,7 +75,7 @@ public class RoundManager : MonoBehaviour
 	{
 		Manager.RegisterManager(this);
 		Player.OnDeathEventListener += OnPlayerDeathEvent;
-		Enemy.OnEnemyDeathEventListener += OnEnemyDeathEvent;
+		Enemy.OnEnemyDeathEventHandler += OnEnemyDeathEvent;
 
 		titleManager = Manager.Get<TitleManager>();
 		enemyStorage = new GameObject("EnemyStorage").transform;
@@ -102,12 +102,14 @@ public class RoundManager : MonoBehaviour
 	}
 
 	private void OnPlayerDeathEvent(PlayerDeathEvent e) {
+		StopAllCoroutines();
 		e.GetPlayer().enabled = false;
 		StartCoroutine(GameOver());
 	}
 
 	public IEnumerator GameOver()
 	{
+		Enemy.ClearEvents();
 		Enemy enemy;
 
 		for (int i = 0; i < enemyStorage.childCount; i++)

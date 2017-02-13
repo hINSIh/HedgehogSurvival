@@ -6,8 +6,11 @@ using UnityEditor.Animations;
 
 public class Enemy : MonoBehaviour, Damageable
 {
-	public static event OnEnemyDeathEventHandler OnEnemyDeathEventListener;
-	public delegate void OnEnemyDeathEventHandler(EnemyDeathEvent e);
+	public static event OnEnemyDeathEvent OnEnemyDeathEventHandler;
+	public static event OnEnemyDamageEvent OnEnemyDamageEventHandler;
+
+	public delegate void OnEnemyDamageEvent(EnemyDamageEvent e);
+	public delegate void OnEnemyDeathEvent(EnemyDeathEvent e);
 
 	public enum DeathReason {
 		Kill, RoundClear
@@ -36,6 +39,11 @@ public class Enemy : MonoBehaviour, Damageable
 	private bool isDeath = false;
 
 	private Player player;
+
+	public static void ClearEvents() {
+		OnEnemyDeathEventHandler = delegate {};
+		OnEnemyDamageEventHandler = delegate {};
+	}
 
     // Use this for initialization
     void Start()
@@ -80,10 +88,6 @@ public class Enemy : MonoBehaviour, Damageable
 		}
 	}
 
-	private static void OnPlayerDeathEvent(PlayerDeathEvent e) { 
-		
-	} 
-
 	private void Move() {
 		Vector3 movePos = transform.right * moveSpeed * Time.deltaTime;
 		transform.position += movePos;
@@ -120,7 +124,7 @@ public class Enemy : MonoBehaviour, Damageable
 		}
 
 		EnemyDeathEvent deathEvent = new EnemyDeathEvent(this, reason);
-		OnEnemyDeathEventListener(deathEvent);
+		OnEnemyDeathEventHandler(deathEvent);
 
 		isDeath = true;
 		Destroy(gameObject, 2);
@@ -176,6 +180,9 @@ public class Enemy : MonoBehaviour, Damageable
 		{
 			return;
 		}
+
+		EnemyDamageEvent damageEvent = new EnemyDamageEvent(this, other.GetDamage(), Health);
+		OnEnemyDamageEventHandler(damageEvent);
 
 		Health -= other.GetDamage();
 		StartCoroutine(WaitForDamageDelay());
