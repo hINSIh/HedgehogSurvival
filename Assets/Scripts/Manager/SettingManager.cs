@@ -3,52 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SettingManager : MonoBehaviour {
-	private class Option<T>
-	{
-		public T value;
-		public readonly string prefsNode;
+	private interface ISavable<T> {
+		void Save(string prefsNode, T value);
 
-		public Option(string prefsNode) {
+		T Get(string prefsNode);
+	}
+
+	private class Option<T> {
+		private T value;
+		private string prefsNode;
+		private ISavable<T> savable;
+
+		public Option(string prefsNode, ISavable<T> savable) {
 			this.prefsNode = prefsNode;
+			this.savable = savable;
+			value = savable.Get(prefsNode);
+		}
+
+		public T Value {
+			get { return value; }
+			set { 
+				this.value = value;
+				savable.Save(prefsNode, value);
+			}
 		}
 	}
 
-	private Option<bool> bgmEnableOption = new Option<bool>("setting.bgmEnable");
-	private Option<bool> fxSoundEnableOption = new Option<bool>("setting.fxSoundEnable");
+	private class BoolSavable : ISavable<bool> {
+		public void Save(string prefsNode, bool value) {
+			PlayerPrefs.SetInt(prefsNode, value ? 1 : 0);
+		}
+
+		public bool Get(string prefsNode) {
+			if (PlayerPrefs.HasKey(prefsNode))
+			{
+				return PlayerPrefs.GetInt(prefsNode) != 0;
+			}
+			return true;
+		}
+	}
+
+	private Option<bool> bgmEnableOption;
+	private Option<bool> fxSoundEnableOption;
 
 	void Awake() {
-		if (!PlayerPrefs.HasKey(bgmEnableOption.prefsNode)) {
-			PlayerPrefs.SetInt(bgmEnableOption.prefsNode, 1);
-			PlayerPrefs.SetInt(fxSoundEnableOption.prefsNode, 1);
-		}
+		ISavable<bool> boolSavable = new BoolSavable();
 
-		bool bgmEnable = 
-			PlayerPrefs.GetInt(bgmEnableOption.prefsNode) != 0;
-		bool fxSoundEnable =
-			PlayerPrefs.GetInt(fxSoundEnableOption.prefsNode) != 0;
-		
-		bgmEnableOption.value = bgmEnable;
-		fxSoundEnableOption.value = fxSoundEnable;
-	}
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+		bgmEnableOption = new Option<bool>("setting.bgmEnable", boolSavable);
+		fxSoundEnableOption = new Option<bool>("setting.fxSoundEnable", boolSavable);
 	}
 
 	public bool BgmEnable { 
-		get { return bgmEnableOption.value; }
-		set { bgmEnableOption.value = value; }
+		get { return bgmEnableOption.Value; }
+		set { bgmEnableOption.Value = value; }
 	}
 
 	public bool FxSoundEnable
 	{
-		get { return fxSoundEnableOption.value; }
-		set { fxSoundEnableOption.value  = value; }
+		get { return fxSoundEnableOption.Value; }
+		set { fxSoundEnableOption.Value = value; }
 	}
 }
