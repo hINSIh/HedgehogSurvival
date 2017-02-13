@@ -135,15 +135,27 @@ public class RoundManager : MonoBehaviour
 		{
 			Stage stage = stages[stageIndex];
 			background.sprite = stage.map;
-			this.audio.Stop();
-			this.audio.clip = stage.stageAudio;
+            this.audio.clip = stage.stageAudio;
 			this.audio.Play();
 			yield return StartRound(stage);
+            StartCoroutine(FadeOutBgm());
 		}
 		itemManager.gameSituation = false;
 	}
 
-	private IEnumerator StartRound(Stage stage) {
+    private IEnumerator FadeOutBgm()
+    {
+        float j = 1f;
+        for (float i = 0; i < 10; i++)
+        {
+            if (j > 0)
+                j -= 0.1f;
+            audio.volume = j;
+            yield return null;
+        }
+    }
+
+    private IEnumerator StartRound(Stage stage) {
 		for (roundIndex = 0; roundIndex < stage.rounds.Length; roundIndex++)
 		{
 			roundText.text = string.Format("{0} - {1}", stageIndex + 1, roundIndex + 1);

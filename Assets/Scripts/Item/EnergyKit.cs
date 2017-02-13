@@ -13,7 +13,7 @@ public class EnergyKit : MonoBehaviour
             return;
         }
 
-		player.Energy += player.energyData.maxEnergy / 2;
+		player.Energy += player.energyData.maxEnergy / 4 + 30;
         Destroy(gameObject);
     }
 }
