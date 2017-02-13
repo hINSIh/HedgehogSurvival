@@ -6,7 +6,7 @@ public class ManagerLoader : MonoBehaviour {
 
 	public Manager managerPrefab;
 
-	void Start () {
+	void Awake () {
 		try {
 			Manager.Get<CoinManager>();
 		} catch {
