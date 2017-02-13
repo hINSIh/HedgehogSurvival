@@ -162,7 +162,8 @@ public class Player : MonoBehaviour, Damageable {
 		get { return energyScript.Energy; }
 		set {
 			EnergyChangedEvent.ChangeType changeType;
-			if (value < 0)
+			float changedValue = value - Energy;
+			if (changedValue < 0)
 			{
 				changeType = EnergyChangedEvent.ChangeType.Spend;
 			}
@@ -170,10 +171,10 @@ public class Player : MonoBehaviour, Damageable {
 				changeType = EnergyChangedEvent.ChangeType.Charge;
 			}
 
-			float fromEnergy = energyScript.Energy;
+			float fromEnergy = Energy;
 
 			EnergyChangedEvent energyChangeEvent = new EnergyChangedEvent(
-				this, changeType, fromEnergy - value, fromEnergy
+				this, changeType, Mathf.Abs(changedValue), fromEnergy
 			);
 
 			OnEnergyChangedEventHandler(energyChangeEvent);

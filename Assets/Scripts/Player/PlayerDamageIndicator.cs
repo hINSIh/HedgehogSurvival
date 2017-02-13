@@ -33,8 +33,8 @@ public class PlayerDamageIndicator : MonoBehaviour {
         {
             text1.gameObject.SetActive(true);
             text1.GetComponent<Text>().text = "-" + damage;
-            textAnimator1.SetBool("Move", true);
-            textAnimator1.SetBool("Move", false);
+            //textAnimator1.SetBool("Move", true);
+            //textAnimator1.SetBool("Move", false);
             yield return new WaitForSeconds(0.1f);
             text1.gameObject.SetActive(false);
 
@@ -44,8 +44,8 @@ public class PlayerDamageIndicator : MonoBehaviour {
         {
             text2.gameObject.SetActive(true);
             text2.GetComponent<Text>().text = "-" + damage;
-            textAnimator2.SetBool("Move", true);
-            textAnimator2.SetBool("Move", false);
+            //textAnimator2.SetBool("Move", true);
+            //textAnimator2.SetBool("Move", false);
             yield return new WaitForSeconds(0.1f);
             text2.gameObject.SetActive(false);
         }
