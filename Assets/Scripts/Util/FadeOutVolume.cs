@@ -14,10 +14,10 @@ public class FadeOutVolume : MonoBehaviour {
     private IEnumerator StartGame()
     {
         float j = 1f;
-        for (float i = 0; i < 100; i ++)
+        for (float i = 0; i < 10; i ++)
         {
             if (j > 0)
-                j -= 0.09f;
+                j -= 0.1f;
             audio.volume = j;
             yield return null;
         }

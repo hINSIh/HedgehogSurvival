@@ -32,7 +32,6 @@ public class Option<T>
 		}
 	}
 }
-
 public class SettingManager : MonoBehaviour {
 	private class BoolSavable : ISavable<bool> {
 		public void Save(string prefsNode, bool value) {
