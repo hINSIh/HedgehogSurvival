@@ -37,6 +37,7 @@ public class Enemy : MonoBehaviour, Damageable
 	private bool canMove = true;
 	private bool canDamage = true;
 	private bool isDeath = false;
+	private bool isPause = false;
 
 	private Player player;
 
@@ -48,6 +49,10 @@ public class Enemy : MonoBehaviour, Damageable
     // Use this for initialization
     void Start()
     {
+		PauseButton pauseButton = Manager.Get<PauseButton>();
+		pauseButton.OnPauseEventHandler += OnPauseEvent;
+		pauseButton.OnPlayEventHandler += OnPlayEvent;
+
         StartCoroutine(CheckFoward());
 		animator = GetComponent<Animator>();
 		spriteRenderer = GetComponent<SpriteRenderer>();
@@ -58,7 +63,7 @@ public class Enemy : MonoBehaviour, Damageable
     // Update is called once per frame
     void Update()
 	{
-		if (isDeath)
+		if (isDeath || isPause)
 		{
 			return;
 		}
@@ -172,6 +177,14 @@ public class Enemy : MonoBehaviour, Damageable
             moveSpeed = tempSpeed;
         }
     }
+
+	private void OnPauseEvent() {
+		isPause = true;
+	}
+
+	private void OnPlayEvent() {
+		isPause = false;
+	}
 
 	#region Damageable
 	public void TryDamage(Damageable other)

@@ -12,7 +12,7 @@ public class RollingButton : MonoBehaviour, SkillButton {
 	private bool isPointerDown = false;
 
 	void Start() {
-		Player.OnEnergyChangedEventListener += OnEnergyChangeEvent;
+		Player.OnEnergyChangedEventHandler += OnEnergyChangeEvent;
 		player = Manager.Get<Player>();
 
 		button = GetComponent<Button>();

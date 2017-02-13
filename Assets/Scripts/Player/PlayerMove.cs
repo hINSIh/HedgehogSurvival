@@ -17,10 +17,15 @@ public class PlayerMove : MonoBehaviour
 	private Vector3 inputVector;
 
 	private float moveSpeed;
+	private bool isPause;
 
 	// Use this for initialization
 	void Start()
 	{
+		PauseButton pauseButton = Manager.Get<PauseButton>();
+		pauseButton.OnPlayEventHandler += OnPlayEvent;
+		pauseButton.OnPauseEventHandler += OnPauseEvent;
+
 		AbilityManager ability = Manager.Get<AbilityManager>();
 		int energyAbilityLevel = ability.Get(AbilityType.RotateSpeed) - 1;
 
@@ -32,6 +37,10 @@ public class PlayerMove : MonoBehaviour
 
 	public void TryMove(Player player)
 	{
+		if (isPause) {
+			return;
+		}
+
 		UpdateInputValue();
 
 		bool canMove = CanMove(player);
@@ -84,5 +93,14 @@ public class PlayerMove : MonoBehaviour
 	private void SetupLimitArea()
 	{
 		limitArea = MapManager.LimitArea.AddMargin(limitPadding);
+	}
+
+	private void OnPauseEvent()
+	{
+		isPause = true;
+	}
+
+	private void OnPlayEvent() {
+		isPause = false;
 	}
 }

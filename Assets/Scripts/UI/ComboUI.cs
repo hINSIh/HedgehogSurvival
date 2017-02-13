@@ -48,8 +48,8 @@ public class ComboUI : MonoBehaviour
 	void Start()
 	{
 		Enemy.OnEnemyDamageEventHandler += OnEnemyDamageEvent;
-		Player.OnDeathEventListener += OnPlayerDeathEvent;
-		Player.OnDamageEventListener += OnPlayerDamageEvent;
+		Player.OnDeathEventHandler += OnPlayerDeathEvent;
+		Player.OnDamageEventHandler += OnPlayerDamageEvent;
 
 		counter.Setup();
 	}

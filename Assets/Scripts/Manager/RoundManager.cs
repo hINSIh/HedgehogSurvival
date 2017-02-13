@@ -74,7 +74,7 @@ public class RoundManager : MonoBehaviour
 	void Start()
 	{
 		Manager.RegisterManager(this);
-		Player.OnDeathEventListener += OnPlayerDeathEvent;
+		Player.OnDeathEventHandler += OnPlayerDeathEvent;
 		Enemy.OnEnemyDeathEventHandler += OnEnemyDeathEvent;
 
 		titleManager = Manager.Get<TitleManager>();

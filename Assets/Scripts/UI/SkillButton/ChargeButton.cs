@@ -10,7 +10,7 @@ public class ChargeButton : MonoBehaviour, SkillButton {
 
 	void Start()
 	{
-		Player.OnDamageEventListener += OnDamageEvent;
+		Player.OnDamageEventHandler += OnDamageEvent;
 		player = Manager.Get<Player>();
 
 		button = GetComponent<Button>();

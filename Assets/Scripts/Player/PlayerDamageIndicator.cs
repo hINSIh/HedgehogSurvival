@@ -18,7 +18,7 @@ public class PlayerDamageIndicator : MonoBehaviour {
     void Start () {
         text1.gameObject.SetActive(false);
         text2.gameObject.SetActive(false);
-        Player.OnDamageEventListener += OnPlayerDamageEvent;
+        Player.OnDamageEventHandler += OnPlayerDamageEvent;
     }
 
     public void OnPlayerDamageEvent(PlayerDamageEvent e)

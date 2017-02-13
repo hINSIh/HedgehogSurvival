@@ -80,15 +80,15 @@ public class Player : MonoBehaviour, Damageable {
 	#endregion
 
 	#region Events
-	public delegate void OnDamageEventHandler(PlayerDamageEvent e);
-	public delegate void OnDeathEventHandler(PlayerDeathEvent e);
-	public delegate void OnEnergyChangedEventHandler(EnergyChangedEvent e);
-	public delegate void OnStateChangedEventHandler(PlayerStateChangedEvent e);
+	public delegate void OnDamageEvent(PlayerDamageEvent e);
+	public delegate void OnDeathEvent(PlayerDeathEvent e);
+	public delegate void OnEnergyChangedEvent(EnergyChangedEvent e);
+	public delegate void OnStateChangedEvent(PlayerStateChangedEvent e);
 
-	public static event OnDamageEventHandler OnDamageEventListener;
-	public static event OnDeathEventHandler OnDeathEventListener;
-	public static event OnEnergyChangedEventHandler OnEnergyChangedEventListener;
-	public static event OnStateChangedEventHandler OnStateChangedEventListener;
+	public static event OnDamageEvent OnDamageEventHandler;
+	public static event OnDeathEvent OnDeathEventHandler;
+	public static event OnEnergyChangedEvent OnEnergyChangedEventHandler;
+	public static event OnStateChangedEvent OnStateChangedEventHandler;
 	#endregion
 
 	[Header("Abilites")]
@@ -114,10 +114,10 @@ public class Player : MonoBehaviour, Damageable {
 	private bool canDamage = true;
 
 	void Awake () {
-		OnDamageEventListener = delegate { };
-		OnDeathEventListener = delegate { };
-		OnEnergyChangedEventListener = delegate { };
-		OnStateChangedEventListener = delegate { };
+		OnDamageEventHandler = delegate { };
+		OnDeathEventHandler = delegate { };
+		OnEnergyChangedEventHandler = delegate { };
+		OnStateChangedEventHandler = delegate { };
 
 		Manager.RegisterManager(this);
 		State = stateStorage.normalState;
@@ -142,7 +142,7 @@ public class Player : MonoBehaviour, Damageable {
 			if (value < Health) {
 				int damage = Health - value;
 				PlayerDamageEvent damageEvent = new PlayerDamageEvent(this, damage, healthScript.Health);
-				OnDamageEventListener(damageEvent);
+				OnDamageEventHandler(damageEvent);
 
 				if (damageEvent.IsCancelled()) {
 					return;
@@ -153,7 +153,7 @@ public class Player : MonoBehaviour, Damageable {
 			animator.SetInteger("Health", Health);
 
 			if (Health <= 0 && enabled) {
-				OnDeathEventListener(new PlayerDeathEvent(this));
+				OnDeathEventHandler(new PlayerDeathEvent(this));
 			}
 		}
 	}
@@ -176,7 +176,7 @@ public class Player : MonoBehaviour, Damageable {
 				this, changeType, fromEnergy - value, fromEnergy
 			);
 
-			OnEnergyChangedEventListener(energyChangeEvent);
+			OnEnergyChangedEventHandler(energyChangeEvent);
 
 			if (energyChangeEvent.IsCancelled()) {
 				return;
@@ -194,9 +194,9 @@ public class Player : MonoBehaviour, Damageable {
 				state.EndState(this);
 			}
 
-			if (OnStateChangedEventListener != null)
+			if (OnStateChangedEventHandler != null)
 			{
-				OnStateChangedEventListener(new PlayerStateChangedEvent(this, state,  value));
+				OnStateChangedEventHandler(new PlayerStateChangedEvent(this, state,  value));
 			}
 
 			state = value;

@@ -8,7 +8,7 @@ public class ChargeFixedRotation : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		Player.OnStateChangedEventListener += OnStateChangedEvent;
+		Player.OnStateChangedEventHandler += OnStateChangedEvent;
 	}
 
 	void Destory() {
